@@ -17,5 +17,5 @@ import seaborn as sns
 # | lable: data
 # | echo: false
 
-
+df = pd.read_csv("")
 ```
