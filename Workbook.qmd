@@ -1,0 +1,21 @@
+---
+title: "Adaptive Workbook"
+format: html
+---
+
+```{python}
+# | label: libraries
+# | echo: false
+# | message: false
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+```{python}
+# | lable: data
+# | echo: false
+
+
+```
