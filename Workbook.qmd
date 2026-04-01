@@ -1,6 +1,13 @@
 ---
-title: "Adaptive Workbook"
+title: "Adaptive Athletics Workbook"
+subtitle: Womens' Basketball Statistics
+author: 
+    - name: Ryan Dennehy
+      affiliation: 
+        - name: University of Arizona
 format: html
+toc: true
+title-block-banner: true
 ---
 
 ```{python}
@@ -8,8 +15,9 @@ format: html
 # | echo: false
 # | message: false
 
-import pandas as pd
+import glob
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 ```
 
@@ -17,5 +25,14 @@ import seaborn as sns
 # | lable: data
 # | echo: false
 
-df = pd.read_csv("")
+# read all CSVs in a folder
+files = glob.glob("Data/*.csv")
+df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
+
+# group by player name and sum all numeric columns
+df_combined = df.groupby("First Name", as_index=False).sum(numeric_only=True)
 ```
+
+# Here is a header denoting the first area
+
+# Here is a second header
