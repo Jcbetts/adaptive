@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ryan Dennehy">
+
+<title>Adaptive Athletics Dashboard</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="dashboard_files/libs/clipboard/clipboard.min.js"></script>
+<script src="dashboard_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="dashboard_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="dashboard_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="dashboard_files/libs/quarto-html/popper.min.js"></script>
+<script src="dashboard_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="dashboard_files/libs/quarto-html/anchor.min.js"></script>
+<link href="dashboard_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="dashboard_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="dashboard_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="dashboard_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="dashboard_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="fullcontent quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Adaptive Athletics Dashboard</h1>
+            <p class="subtitle lead">Accessible Practice Snapshot</p>
+                      </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author">Ryan Dennehy </p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              University of Arizona
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="quick-view" class="level2">
+<h2 class="anchored" data-anchor-id="quick-view">Quick View</h2>
+<div id="268d8216" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+
+            <section class="intro-panel">
+              <p class="eyebrow">Dashboard Summary</p>
+              <h2 class="hero-title anchored">Fast, readable practice reporting</h2>
+              <p class="hero-copy">This dashboard pulls the most important team and player trends into one place with high-contrast cards, simplified labels, and a lighter layout than the full workbook.</p>
+            </section>
+            
+</div>
+<div class="cell-output cell-output-display">
+<section class="card-grid" aria-label="Dashboard highlights">
+        <article class="stat-card">
+          <p class="eyebrow">Overall field goal rate</p>
+          <p class="big-number">50.9%</p>
+          <p class="supporting-text">911 makes on 1,790 attempts</p>
+        </article>
+        
+        <article class="stat-card">
+          <p class="eyebrow">Tracked practices</p>
+          <p class="big-number">11</p>
+          <p class="supporting-text">211 player-practice rows cleaned and included</p>
+        </article>
+        
+        <article class="stat-card">
+          <p class="eyebrow">Top volume shooter</p>
+          <p class="big-number">Elise</p>
+          <p class="supporting-text">221 attempts across 11 practices</p>
+        </article>
+        
+        <article class="stat-card">
+          <p class="eyebrow">Most efficient shooter</p>
+          <p class="big-number">Ally</p>
+          <p class="supporting-text">64.7% on at least 25 field goal attempts</p>
+        </article>
+        </section>
+</div>
+</div>
+<div id="60a88873" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display no-overflow-x">
+
+            <section class="spotlight-shell" aria-labelledby="player-spotlight-heading">
+              <div class="spotlight-header">
+                <div>
+                  <p class="eyebrow">Interactive View</p>
+                  <h2 id="player-spotlight-heading" class="anchored">Player Spotlight</h2>
+                  <p class="hero-copy">Pick a player to see a simple performance snapshot without searching through every table.</p>
+                </div>
+                <div class="spotlight-control">
+                  <label class="spotlight-label" for="player-spotlight-select">Select player</label>
+                  <select id="player-spotlight-select" class="spotlight-select"><option value="Abigayle">Abigayle</option><option value="Ally">Ally</option><option value="Alma">Alma</option><option value="Alyssa">Alyssa</option><option value="Coffin">Coffin</option><option value="Courtney">Courtney</option><option value="Elise">Elise</option><option value="Elizabeth">Elizabeth</option><option value="Ella">Ella</option><option value="Hayley">Hayley</option><option value="Isabella">Isabella</option><option value="Josie">Josie</option><option value="Kyra">Kyra</option><option value="Lily">Lily</option><option value="Liz">Liz</option><option value="Mackenzie">Mackenzie</option><option value="Maddy">Maddy</option><option value="Mia">Mia</option><option value="Nae">Nae</option><option value="Rae">Rae</option><option value="Rosie">Rosie</option><option value="Sam">Sam</option></select>
+                </div>
+              </div>
+              <div id="player-spotlight-cards" class="card-grid" aria-live="polite"></div>
+            </section>
+            <script>
+            (() => {
+              const players = [{"Name": "Abigayle", "Practices": "11", "FG Attempts": "111", "FG Makes": "50", "FG %": "45.0%", "FT Attempted": "21", "FT Makes": "12", "FT %": "57.1%", "Forced TO": "1", "Blocks": "0", "Defensive Events": "1"}, {"Name": "Ally", "Practices": "11", "FG Attempts": "51", "FG Makes": "33", "FG %": "64.7%", "FT Attempted": "16", "FT Makes": "2", "FT %": "12.5%", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Alma", "Practices": "11", "FG Attempts": "37", "FG Makes": "17", "FG %": "45.9%", "FT Attempted": "10", "FT Makes": "1", "FT %": "10.0%", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Alyssa", "Practices": "11", "FG Attempts": "0", "FG Makes": "0", "FG %": "\u2014", "FT Attempted": "0", "FT Makes": "0", "FT %": "\u2014", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Coffin", "Practices": "11", "FG Attempts": "208", "FG Makes": "110", "FG %": "52.9%", "FT Attempted": "26", "FT Makes": "16", "FT %": "61.5%", "Forced TO": "2", "Blocks": "8", "Defensive Events": "10"}, {"Name": "Courtney", "Practices": "5", "FG Attempts": "36", "FG Makes": "22", "FG %": "61.1%", "FT Attempted": "0", "FT Makes": "0", "FT %": "\u2014", "Forced TO": "2", "Blocks": "0", "Defensive Events": "2"}, {"Name": "Elise", "Practices": "11", "FG Attempts": "221", "FG Makes": "137", "FG %": "62.0%", "FT Attempted": "35", "FT Makes": "22", "FT %": "62.9%", "Forced TO": "3", "Blocks": "0", "Defensive Events": "3"}, {"Name": "Elizabeth", "Practices": "1", "FG Attempts": "9", "FG Makes": "6", "FG %": "66.7%", "FT Attempted": "0", "FT Makes": "0", "FT %": "\u2014", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Ella", "Practices": "11", "FG Attempts": "0", "FG Makes": "0", "FG %": "\u2014", "FT Attempted": "0", "FT Makes": "0", "FT %": "\u2014", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Hayley", "Practices": "11", "FG Attempts": "94", "FG Makes": "59", "FG %": "62.8%", "FT Attempted": "16", "FT Makes": "8", "FT %": "50.0%", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Isabella", "Practices": "11", "FG Attempts": "116", "FG Makes": "75", "FG %": "64.7%", "FT Attempted": "33", "FT Makes": "17", "FT %": "51.5%", "Forced TO": "3", "Blocks": "0", "Defensive Events": "3"}, {"Name": "Josie", "Practices": "2", "FG Attempts": "8", "FG Makes": "2", "FG %": "25.0%", "FT Attempted": "0", "FT Makes": "0", "FT %": "\u2014", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Kyra", "Practices": "11", "FG Attempts": "42", "FG Makes": "15", "FG %": "35.7%", "FT Attempted": "9", "FT Makes": "7", "FT %": "77.8%", "Forced TO": "1", "Blocks": "0", "Defensive Events": "1"}, {"Name": "Lily", "Practices": "11", "FG Attempts": "125", "FG Makes": "64", "FG %": "51.2%", "FT Attempted": "28", "FT Makes": "14", "FT %": "50.0%", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Liz", "Practices": "10", "FG Attempts": "75", "FG Makes": "29", "FG %": "38.7%", "FT Attempted": "23", "FT Makes": "12", "FT %": "52.2%", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Mackenzie", "Practices": "11", "FG Attempts": "40", "FG Makes": "20", "FG %": "50.0%", "FT Attempted": "23", "FT Makes": "11", "FT %": "47.8%", "Forced TO": "0", "Blocks": "0", "Defensive Events": "0"}, {"Name": "Maddy", "Practices": "8", "FG Attempts": "64", "FG Makes": "31", "FG %": "48.4%", "FT Attempted": "6", "FT Makes": "3", "FT %": "50.0%", "Forced TO": "1", "Blocks": "0", "Defensive Events": "1"}, {"Name": "Mia", "Practices": "11", "FG Attempts": "71", "FG Makes": "26", "FG %": "36.6%", "FT Attempted": "28", "FT Makes": "5", "FT %": "17.9%", "Forced TO": "2", "Blocks": "0", "Defensive Events": "2"}, {"Name": "Nae", "Practices": "10", "FG Attempts": "49", "FG Makes": "24", "FG %": "49.0%", "FT Attempted": "20", "FT Makes": "13", "FT %": "65.0%", "Forced TO": "2", "Blocks": "0", "Defensive Events": "2"}, {"Name": "Rae", "Practices": "10", "FG Attempts": "160", "FG Makes": "75", "FG %": "46.9%", "FT Attempted": "22", "FT Makes": "10", "FT %": "45.5%", "Forced TO": "4", "Blocks": "0", "Defensive Events": "4"}, {"Name": "Rosie", "Practices": "11", "FG Attempts": "112", "FG Makes": "47", "FG %": "42.0%", "FT Attempted": "28", "FT Makes": "14", "FT %": "50.0%", "Forced TO": "1", "Blocks": "0", "Defensive Events": "1"}, {"Name": "Sam", "Practices": "11", "FG Attempts": "161", "FG Makes": "69", "FG %": "42.9%", "FT Attempted": "26", "FT Makes": "11", "FT %": "42.3%", "Forced TO": "1", "Blocks": "0", "Defensive Events": "1"}];
+              const select = document.getElementById("player-spotlight-select");
+              const cards = document.getElementById("player-spotlight-cards");
+              if (!select || !cards || !players.length) return;
+              const render = (name) => {
+                const player = players.find((item) => item.Name === name) || players[0];
+                cards.innerHTML = `
+                  <article class="stat-card">
+                    <p class="eyebrow">Name</p>
+                    <p class="big-number">${player.Name}</p>
+                    <p class="supporting-text">${player.Practices} practices tracked</p>
+                  </article>
+                  <article class="stat-card">
+                    <p class="eyebrow">Field Goal Rate</p>
+                    <p class="big-number">${player["FG %"]}</p>
+                    <p class="supporting-text">${player["FG Makes"]} makes on ${player["FG Attempts"]} attempts</p>
+                  </article>
+                  <article class="stat-card">
+                    <p class="eyebrow">Free Throw Rate</p>
+                    <p class="big-number">${player["FT %"]}</p>
+                    <p class="supporting-text">${player["FT Makes"]} makes on ${player["FT Attempted"]} attempts</p>
+                  </article>
+                  <article class="insight-card">
+                    <p class="eyebrow">Defensive Activity</p>
+                    <p class="big-number">${player["Defensive Events"]}</p>
+                    <p class="supporting-text">${player["Forced TO"]} forced turnovers and ${player["Blocks"]} blocks</p>
+                  </article>
+                `;
+              };
+              select.addEventListener("change", (event) => render(event.target.value));
+              render(select.value);
+            })();
+            </script>
+            
+</div>
+</div>
+</section>
+<section id="what-stands-out" class="level2">
+<h2 class="anchored" data-anchor-id="what-stands-out">What Stands Out</h2>
+<div id="051aced2" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display">
+<section class="card-grid" aria-label="Dashboard highlights">
+        <article class="insight-card">
+          <p class="eyebrow">Best practice shooting day</p>
+          <p class="big-number">2/23</p>
+          <p class="supporting-text">60.3% field goal rate</p>
+        </article>
+        
+        <article class="insight-card">
+          <p class="eyebrow">Latest practice in the data</p>
+          <p class="big-number">3/26</p>
+          <p class="supporting-text">60.0% field goal rate with 165 attempts</p>
+        </article>
+        
+        <article class="insight-card">
+          <p class="eyebrow">Defensive activity leader</p>
+          <p class="big-number">Coffin</p>
+          <p class="supporting-text">10 combined forced turnovers and blocks</p>
+        </article>
+        </section>
+</div>
+</div>
+<p>The dashboard is designed to be readable at a glance. High-contrast colors, large numbers, plain-language labels, and short summary notes make it easier to understand the team’s performance quickly.</p>
+</section>
+<section id="team-details" class="level2">
+<h2 class="anchored" data-anchor-id="team-details">Team Details</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Player Leaders</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Practice Snapshot</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="46513a7c" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="6">
+<style type="text/css">
+#T_af8f5 th {
+  padding: 0.75rem 1rem;
+}
+#T_af8f5 td {
+  padding: 0.75rem 1rem;
+}
+#T_af8f5 thead th {
+  background-color: #0C234B;
+  color: white;
+  font-weight: 700;
+}
+</style>
+
+<table id="T_af8f5" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_af8f5_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Name</th>
+<th id="T_af8f5_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Practices</th>
+<th id="T_af8f5_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">FG Attempts</th>
+<th id="T_af8f5_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">FG Makes</th>
+<th id="T_af8f5_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">FG %</th>
+<th id="T_af8f5_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">Attempts per Practice</th>
+<th id="T_af8f5_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">Defensive Events</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_af8f5_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_af8f5_row0_col0" class="data row0 col0">Elise</td>
+<td id="T_af8f5_row0_col1" class="data row0 col1">11</td>
+<td id="T_af8f5_row0_col2" class="data row0 col2">221</td>
+<td id="T_af8f5_row0_col3" class="data row0 col3">137</td>
+<td id="T_af8f5_row0_col4" class="data row0 col4">62.0%</td>
+<td id="T_af8f5_row0_col5" class="data row0 col5">20.1</td>
+<td id="T_af8f5_row0_col6" class="data row0 col6">3</td>
+</tr>
+<tr class="even">
+<th id="T_af8f5_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_af8f5_row1_col0" class="data row1 col0">Coffin</td>
+<td id="T_af8f5_row1_col1" class="data row1 col1">11</td>
+<td id="T_af8f5_row1_col2" class="data row1 col2">208</td>
+<td id="T_af8f5_row1_col3" class="data row1 col3">110</td>
+<td id="T_af8f5_row1_col4" class="data row1 col4">52.9%</td>
+<td id="T_af8f5_row1_col5" class="data row1 col5">18.9</td>
+<td id="T_af8f5_row1_col6" class="data row1 col6">10</td>
+</tr>
+<tr class="odd">
+<th id="T_af8f5_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_af8f5_row2_col0" class="data row2 col0">Sam</td>
+<td id="T_af8f5_row2_col1" class="data row2 col1">11</td>
+<td id="T_af8f5_row2_col2" class="data row2 col2">161</td>
+<td id="T_af8f5_row2_col3" class="data row2 col3">69</td>
+<td id="T_af8f5_row2_col4" class="data row2 col4">42.9%</td>
+<td id="T_af8f5_row2_col5" class="data row2 col5">14.6</td>
+<td id="T_af8f5_row2_col6" class="data row2 col6">1</td>
+</tr>
+<tr class="even">
+<th id="T_af8f5_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
+<td id="T_af8f5_row3_col0" class="data row3 col0">Rae</td>
+<td id="T_af8f5_row3_col1" class="data row3 col1">10</td>
+<td id="T_af8f5_row3_col2" class="data row3 col2">160</td>
+<td id="T_af8f5_row3_col3" class="data row3 col3">75</td>
+<td id="T_af8f5_row3_col4" class="data row3 col4">46.9%</td>
+<td id="T_af8f5_row3_col5" class="data row3 col5">16.0</td>
+<td id="T_af8f5_row3_col6" class="data row3 col6">4</td>
+</tr>
+<tr class="odd">
+<th id="T_af8f5_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</th>
+<td id="T_af8f5_row4_col0" class="data row4 col0">Lily</td>
+<td id="T_af8f5_row4_col1" class="data row4 col1">11</td>
+<td id="T_af8f5_row4_col2" class="data row4 col2">125</td>
+<td id="T_af8f5_row4_col3" class="data row4 col3">64</td>
+<td id="T_af8f5_row4_col4" class="data row4 col4">51.2%</td>
+<td id="T_af8f5_row4_col5" class="data row4 col5">11.4</td>
+<td id="T_af8f5_row4_col6" class="data row4 col6">0</td>
+</tr>
+<tr class="even">
+<th id="T_af8f5_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</th>
+<td id="T_af8f5_row5_col0" class="data row5 col0">Isabella</td>
+<td id="T_af8f5_row5_col1" class="data row5 col1">11</td>
+<td id="T_af8f5_row5_col2" class="data row5 col2">116</td>
+<td id="T_af8f5_row5_col3" class="data row5 col3">75</td>
+<td id="T_af8f5_row5_col4" class="data row5 col4">64.7%</td>
+<td id="T_af8f5_row5_col5" class="data row5 col5">10.5</td>
+<td id="T_af8f5_row5_col6" class="data row5 col6">3</td>
+</tr>
+<tr class="odd">
+<th id="T_af8f5_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</th>
+<td id="T_af8f5_row6_col0" class="data row6 col0">Rosie</td>
+<td id="T_af8f5_row6_col1" class="data row6 col1">11</td>
+<td id="T_af8f5_row6_col2" class="data row6 col2">112</td>
+<td id="T_af8f5_row6_col3" class="data row6 col3">47</td>
+<td id="T_af8f5_row6_col4" class="data row6 col4">42.0%</td>
+<td id="T_af8f5_row6_col5" class="data row6 col5">10.2</td>
+<td id="T_af8f5_row6_col6" class="data row6 col6">1</td>
+</tr>
+<tr class="even">
+<th id="T_af8f5_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">7</th>
+<td id="T_af8f5_row7_col0" class="data row7 col0">Abigayle</td>
+<td id="T_af8f5_row7_col1" class="data row7 col1">11</td>
+<td id="T_af8f5_row7_col2" class="data row7 col2">111</td>
+<td id="T_af8f5_row7_col3" class="data row7 col3">50</td>
+<td id="T_af8f5_row7_col4" class="data row7 col4">45.0%</td>
+<td id="T_af8f5_row7_col5" class="data row7 col5">10.1</td>
+<td id="T_af8f5_row7_col6" class="data row7 col6">1</td>
+</tr>
+<tr class="odd">
+<th id="T_af8f5_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">8</th>
+<td id="T_af8f5_row8_col0" class="data row8 col0">Hayley</td>
+<td id="T_af8f5_row8_col1" class="data row8 col1">11</td>
+<td id="T_af8f5_row8_col2" class="data row8 col2">94</td>
+<td id="T_af8f5_row8_col3" class="data row8 col3">59</td>
+<td id="T_af8f5_row8_col4" class="data row8 col4">62.8%</td>
+<td id="T_af8f5_row8_col5" class="data row8 col5">8.5</td>
+<td id="T_af8f5_row8_col6" class="data row8 col6">0</td>
+</tr>
+<tr class="even">
+<th id="T_af8f5_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">9</th>
+<td id="T_af8f5_row9_col0" class="data row9 col0">Liz</td>
+<td id="T_af8f5_row9_col1" class="data row9 col1">10</td>
+<td id="T_af8f5_row9_col2" class="data row9 col2">75</td>
+<td id="T_af8f5_row9_col3" class="data row9 col3">29</td>
+<td id="T_af8f5_row9_col4" class="data row9 col4">38.7%</td>
+<td id="T_af8f5_row9_col5" class="data row9 col5">7.5</td>
+<td id="T_af8f5_row9_col6" class="data row9 col6">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="09688f8b" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="7">
+<style type="text/css">
+#T_e689e th {
+  padding: 0.75rem 1rem;
+}
+#T_e689e td {
+  padding: 0.75rem 1rem;
+}
+#T_e689e thead th {
+  background-color: #0C234B;
+  color: white;
+  font-weight: 700;
+}
+</style>
+
+<table id="T_e689e" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_e689e_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Date</th>
+<th id="T_e689e_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Player Entries</th>
+<th id="T_e689e_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">FG Attempts</th>
+<th id="T_e689e_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">FG Makes</th>
+<th id="T_e689e_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">FG %</th>
+<th id="T_e689e_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">Turnovers</th>
+<th id="T_e689e_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">Forced TO</th>
+<th id="T_e689e_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">Blocks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_e689e_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_e689e_row0_col0" class="data row0 col0">1/27</td>
+<td id="T_e689e_row0_col1" class="data row0 col1">16</td>
+<td id="T_e689e_row0_col2" class="data row0 col2">167</td>
+<td id="T_e689e_row0_col3" class="data row0 col3">65</td>
+<td id="T_e689e_row0_col4" class="data row0 col4">38.9%</td>
+<td id="T_e689e_row0_col5" class="data row0 col5">1</td>
+<td id="T_e689e_row0_col6" class="data row0 col6">2</td>
+<td id="T_e689e_row0_col7" class="data row0 col7">3</td>
+</tr>
+<tr class="even">
+<th id="T_e689e_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_e689e_row1_col0" class="data row1 col0">2/3</td>
+<td id="T_e689e_row1_col1" class="data row1 col1">18</td>
+<td id="T_e689e_row1_col2" class="data row1 col2">69</td>
+<td id="T_e689e_row1_col3" class="data row1 col3">31</td>
+<td id="T_e689e_row1_col4" class="data row1 col4">44.9%</td>
+<td id="T_e689e_row1_col5" class="data row1 col5">6</td>
+<td id="T_e689e_row1_col6" class="data row1 col6">2</td>
+<td id="T_e689e_row1_col7" class="data row1 col7">0</td>
+</tr>
+<tr class="odd">
+<th id="T_e689e_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_e689e_row2_col0" class="data row2 col0">2/5</td>
+<td id="T_e689e_row2_col1" class="data row2 col1">18</td>
+<td id="T_e689e_row2_col2" class="data row2 col2">141</td>
+<td id="T_e689e_row2_col3" class="data row2 col3">77</td>
+<td id="T_e689e_row2_col4" class="data row2 col4">54.6%</td>
+<td id="T_e689e_row2_col5" class="data row2 col5">12</td>
+<td id="T_e689e_row2_col6" class="data row2 col6">4</td>
+<td id="T_e689e_row2_col7" class="data row2 col7">0</td>
+</tr>
+<tr class="even">
+<th id="T_e689e_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
+<td id="T_e689e_row3_col0" class="data row3 col0">2/11</td>
+<td id="T_e689e_row3_col1" class="data row3 col1">19</td>
+<td id="T_e689e_row3_col2" class="data row3 col2">221</td>
+<td id="T_e689e_row3_col3" class="data row3 col3">100</td>
+<td id="T_e689e_row3_col4" class="data row3 col4">45.2%</td>
+<td id="T_e689e_row3_col5" class="data row3 col5">2</td>
+<td id="T_e689e_row3_col6" class="data row3 col6">2</td>
+<td id="T_e689e_row3_col7" class="data row3 col7">0</td>
+</tr>
+<tr class="odd">
+<th id="T_e689e_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</th>
+<td id="T_e689e_row4_col0" class="data row4 col0">2/17</td>
+<td id="T_e689e_row4_col1" class="data row4 col1">19</td>
+<td id="T_e689e_row4_col2" class="data row4 col2">0</td>
+<td id="T_e689e_row4_col3" class="data row4 col3">0</td>
+<td id="T_e689e_row4_col4" class="data row4 col4">—</td>
+<td id="T_e689e_row4_col5" class="data row4 col5">0</td>
+<td id="T_e689e_row4_col6" class="data row4 col6">0</td>
+<td id="T_e689e_row4_col7" class="data row4 col7">0</td>
+</tr>
+<tr class="even">
+<th id="T_e689e_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</th>
+<td id="T_e689e_row5_col0" class="data row5 col0">2/19</td>
+<td id="T_e689e_row5_col1" class="data row5 col1">20</td>
+<td id="T_e689e_row5_col2" class="data row5 col2">175</td>
+<td id="T_e689e_row5_col3" class="data row5 col3">57</td>
+<td id="T_e689e_row5_col4" class="data row5 col4">32.6%</td>
+<td id="T_e689e_row5_col5" class="data row5 col5">10</td>
+<td id="T_e689e_row5_col6" class="data row5 col6">5</td>
+<td id="T_e689e_row5_col7" class="data row5 col7">3</td>
+</tr>
+<tr class="odd">
+<th id="T_e689e_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</th>
+<td id="T_e689e_row6_col0" class="data row6 col0">2/23</td>
+<td id="T_e689e_row6_col1" class="data row6 col1">19</td>
+<td id="T_e689e_row6_col2" class="data row6 col2">456</td>
+<td id="T_e689e_row6_col3" class="data row6 col3">275</td>
+<td id="T_e689e_row6_col4" class="data row6 col4">60.3%</td>
+<td id="T_e689e_row6_col5" class="data row6 col5">0</td>
+<td id="T_e689e_row6_col6" class="data row6 col6">0</td>
+<td id="T_e689e_row6_col7" class="data row6 col7">0</td>
+</tr>
+<tr class="even">
+<th id="T_e689e_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">7</th>
+<td id="T_e689e_row7_col0" class="data row7 col0">2/24</td>
+<td id="T_e689e_row7_col1" class="data row7 col1">20</td>
+<td id="T_e689e_row7_col2" class="data row7 col2">176</td>
+<td id="T_e689e_row7_col3" class="data row7 col3">104</td>
+<td id="T_e689e_row7_col4" class="data row7 col4">59.1%</td>
+<td id="T_e689e_row7_col5" class="data row7 col5">8</td>
+<td id="T_e689e_row7_col6" class="data row7 col6">3</td>
+<td id="T_e689e_row7_col7" class="data row7 col7">1</td>
+</tr>
+<tr class="odd">
+<th id="T_e689e_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">8</th>
+<td id="T_e689e_row8_col0" class="data row8 col0">3/3</td>
+<td id="T_e689e_row8_col1" class="data row8 col1">20</td>
+<td id="T_e689e_row8_col2" class="data row8 col2">93</td>
+<td id="T_e689e_row8_col3" class="data row8 col3">50</td>
+<td id="T_e689e_row8_col4" class="data row8 col4">53.8%</td>
+<td id="T_e689e_row8_col5" class="data row8 col5">0</td>
+<td id="T_e689e_row8_col6" class="data row8 col6">0</td>
+<td id="T_e689e_row8_col7" class="data row8 col7">0</td>
+</tr>
+<tr class="even">
+<th id="T_e689e_level0_row9" class="row_heading level0 row9" data-quarto-table-cell-role="th">9</th>
+<td id="T_e689e_row9_col0" class="data row9 col0">3/21</td>
+<td id="T_e689e_row9_col1" class="data row9 col1">21</td>
+<td id="T_e689e_row9_col2" class="data row9 col2">127</td>
+<td id="T_e689e_row9_col3" class="data row9 col3">53</td>
+<td id="T_e689e_row9_col4" class="data row9 col4">41.7%</td>
+<td id="T_e689e_row9_col5" class="data row9 col5">13</td>
+<td id="T_e689e_row9_col6" class="data row9 col6">3</td>
+<td id="T_e689e_row9_col7" class="data row9 col7">1</td>
+</tr>
+<tr class="odd">
+<th id="T_e689e_level0_row10" class="row_heading level0 row10" data-quarto-table-cell-role="th">10</th>
+<td id="T_e689e_row10_col0" class="data row10 col0">3/26</td>
+<td id="T_e689e_row10_col1" class="data row10 col1">21</td>
+<td id="T_e689e_row10_col2" class="data row10 col2">165</td>
+<td id="T_e689e_row10_col3" class="data row10 col3">99</td>
+<td id="T_e689e_row10_col4" class="data row10 col4">60.0%</td>
+<td id="T_e689e_row10_col5" class="data row10 col5">9</td>
+<td id="T_e689e_row10_col6" class="data row10 col6">2</td>
+<td id="T_e689e_row10_col7" class="data row10 col7">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="visual-trends" class="level2">
+<h2 class="anchored" data-anchor-id="visual-trends">Visual Trends</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Shooting Trend</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Top Scorers By Attempts</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="a8be7071" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="dashboard_files/figure-html/cell-9-output-1.png" width="1040" height="512" class="figure-img"></p>
+<figcaption>Field goal percentage by practice date.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The dashed red line marks the team average. Points above that line were stronger shooting practices than the overall average.</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="acbb96cc" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="dashboard_files/figure-html/cell-10-output-1.png" width="993" height="560" class="figure-img"></p>
+<figcaption>Top 8 players ranked by field goal attempts.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This view highlights who is taking the most shots overall. It is useful for understanding role, workload, and where efficiency gains would have the biggest team impact.</p>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,222 @@
+:root {
+  --arizona-red: #AB0520;
+  --arizona-blue: #0C234B;
+  --arizona-sand: #F4EDE5;
+  --surface: #ffffff;
+  --text: #172033;
+  --muted: #4c5a73;
+  --border: #d7dce5;
+}
+
+body {
+  color: var(--text);
+  background: linear-gradient(180deg, #fbfbfd 0%, #f2f4f8 100%);
+}
+
+#title-block-header .quarto-title-banner {
+  background:
+    linear-gradient(135deg, rgba(12, 35, 75, 0.97), rgba(12, 35, 75, 0.92)),
+    linear-gradient(90deg, rgba(171, 5, 32, 0.25), rgba(171, 5, 32, 0));
+  border-bottom: 6px solid var(--arizona-red);
+}
+
+#title-block-header .quarto-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#title-block-header .quarto-title::before {
+  content: "";
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/3/34/Arizona_Wildcats_logo.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+#title-block-header .title,
+#title-block-header .subtitle,
+#title-block-header .quarto-title-meta,
+#title-block-header .quarto-title-meta-author,
+#title-block-header .quarto-title-meta-heading,
+#title-block-header .quarto-title-meta-contents,
+#title-block-header .author,
+#title-block-header .affiliation {
+  color: #fff;
+}
+
+#title-block-header .subtitle {
+  color: var(--arizona-sand);
+}
+
+main.content {
+  max-width: 1180px;
+}
+
+h2 {
+  margin-top: 2rem;
+  color: var(--arizona-blue);
+  font-weight: 800;
+}
+
+.intro-panel,
+.spotlight-shell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 1.2rem 1.25rem;
+  box-shadow: 0 10px 24px rgba(12, 35, 75, 0.08);
+  margin: 1rem 0 1.25rem;
+}
+
+.intro-panel {
+  background:
+    linear-gradient(135deg, rgba(12, 35, 75, 0.04), rgba(171, 5, 32, 0.03)),
+    var(--surface);
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.05;
+  color: var(--arizona-blue);
+}
+
+.hero-copy {
+  margin: 0.55rem 0 0;
+  max-width: 66ch;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.stat-card,
+.insight-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.1rem 1.1rem 1rem;
+  box-shadow: 0 10px 24px rgba(12, 35, 75, 0.08);
+}
+
+.stat-card {
+  border-top: 6px solid var(--arizona-red);
+}
+
+.insight-card {
+  border-top: 6px solid var(--arizona-blue);
+}
+
+.eyebrow {
+  margin: 0 0 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--arizona-blue);
+}
+
+.big-number {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+.supporting-text {
+  margin: 0.55rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.spotlight-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.spotlight-control {
+  min-width: 220px;
+}
+
+.spotlight-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--arizona-blue);
+  margin-bottom: 0.35rem;
+}
+
+.spotlight-select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  background: #fff;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.spotlight-select:focus {
+  outline: 3px solid rgba(171, 5, 32, 0.2);
+  border-color: var(--arizona-red);
+}
+
+.table {
+  background: var(--surface);
+}
+
+.cell-output-display {
+  overflow-x: auto;
+}
+
+.panel-tabset .nav-tabs {
+  border-bottom: 2px solid rgba(12, 35, 75, 0.12);
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.panel-tabset .nav-tabs .nav-link {
+  border: 0;
+  border-radius: 999px;
+  color: var(--arizona-blue);
+  font-weight: 700;
+  background: rgba(12, 35, 75, 0.06);
+}
+
+.panel-tabset .nav-tabs .nav-link.active {
+  background: var(--arizona-blue);
+  color: #fff;
+}
+
+@media (max-width: 700px) {
+  #title-block-header .quarto-title {
+    align-items: flex-start;
+  }
+
+  #title-block-header .quarto-title::before {
+    width: 58px;
+    height: 58px;
+    flex-basis: 58px;
+  }
+
+  .spotlight-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

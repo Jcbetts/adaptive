@@ -68,6 +68,16 @@ def style_table(styler: pd.io.formats.style.Styler) -> pd.io.formats.style.Style
         ],
         overwrite=False,
     )
+
+
+def display_name(first_name: str, last_name: str, fallback: str) -> str:
+    first = (first_name or "").strip()
+    last = (last_name or "").strip()
+    if first == "Abby" and last:
+        return last
+    if first:
+        return first
+    return fallback
 ```
 
 ```{python}
@@ -78,8 +88,9 @@ practice_data = load_practice_data("Data")
 player_summary = build_player_summary(practice_data)
 practice_summary = build_practice_summary(practice_data)
 
-player_summary["player_label"] = player_summary["First Name"].where(
-    player_summary["First Name"].str.strip() != "", player_summary["player_name"]
+player_summary["player_label"] = player_summary.apply(
+    lambda row: display_name(row["First Name"], row["Last Name"], row["player_name"]),
+    axis=1,
 )
 qualified_shooters = player_summary.loc[player_summary["FG Attempts"] >= 25].copy()
 ball_pressure = player_summary.assign(
