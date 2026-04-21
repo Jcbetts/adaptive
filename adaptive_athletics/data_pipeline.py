@@ -32,6 +32,10 @@ NUMERIC_COLUMNS = [
     "Blocks",
 ]
 
+NAME_ALIASES = {
+    ("Elizabeth", "Pentecost"): ("Liz", "Pentecost"),
+}
+
 
 def load_practice_data(data_dir: str | Path = "Data") -> pd.DataFrame:
     data_path = Path(data_dir)
@@ -65,6 +69,12 @@ def clean_practice_data(df: pd.DataFrame) -> pd.DataFrame:
 
     cleaned["First Name"] = _clean_text_series(cleaned["First Name"])
     cleaned["Last Name"] = _clean_text_series(cleaned["Last Name"])
+    cleaned[["First Name", "Last Name"]] = cleaned.apply(
+        lambda row: pd.Series(
+            NAME_ALIASES.get((row["First Name"], row["Last Name"]), (row["First Name"], row["Last Name"]))
+        ),
+        axis=1,
+    )
 
     cleaned = cleaned.loc[_valid_player_rows(cleaned)].copy()
 
