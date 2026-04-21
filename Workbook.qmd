@@ -1,11 +1,13 @@
 ---
 title: "Adaptive Athletics Workbook"
 subtitle: Womens' Basketball Statistics
-author: 
+author:
     - name: Ryan Dennehy
-      affiliation: 
+      affiliation:
         - name: University of Arizona
-format: html
+format:
+  html:
+    css: workbook.css
 toc: true
 title-block-banner: true
 ---
@@ -15,24 +17,329 @@ title-block-banner: true
 # | echo: false
 # | message: false
 
-import glob
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from matplotlib.ticker import PercentFormatter
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd()))
+
+from adaptive_athletics.data_pipeline import (
+    build_player_summary,
+    build_practice_summary,
+    load_practice_data,
+)
+
+plt.style.use("seaborn-v0_8-whitegrid")
+sns.set_theme(style="whitegrid")
+
+ARIZONA_RED = "#AB0520"
+ARIZONA_BLUE = "#0C234B"
+
+
+def format_overview_value(value: float) -> str:
+    if pd.isna(value):
+        return "—"
+    if float(value).is_integer():
+        return f"{int(value):,}"
+    return f"{value:,.3f}"
+
+
+def format_overview_rate(value: float) -> str:
+    if pd.isna(value):
+        return "—"
+    return f"{value:.1%}"
+
+
+def style_table(styler: pd.io.formats.style.Styler) -> pd.io.formats.style.Styler:
+    return styler.set_table_styles(
+        [
+            {"selector": "th", "props": [("padding", "0.5rem 0.9rem")]},
+            {"selector": "td", "props": [("padding", "0.5rem 0.9rem")]},
+            {
+                "selector": "thead th",
+                "props": [
+                    ("background-color", ARIZONA_BLUE),
+                    ("color", "white"),
+                ],
+            },
+        ],
+        overwrite=False,
+    )
 ```
 
 ```{python}
-# | lable: data
+# | label: data
 # | echo: false
 
-# read all CSVs in a folder
-files = glob.glob("Data/*.csv")
-df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
+practice_data = load_practice_data("Data")
+player_summary = build_player_summary(practice_data)
+practice_summary = build_practice_summary(practice_data)
 
-# group by player name and sum all numeric columns
-df_combined = df.groupby("First Name", as_index=False).sum(numeric_only=True)
+player_summary["player_label"] = player_summary["First Name"].where(
+    player_summary["First Name"].str.strip() != "", player_summary["player_name"]
+)
+qualified_shooters = player_summary.loc[player_summary["FG Attempts"] >= 25].copy()
+ball_pressure = player_summary.assign(
+    **{"Defensive Events": player_summary["Forced TO"] + player_summary["Blocks"]}
+).sort_values(["Defensive Events", "Forced TO", "Blocks"], ascending=[False, False, False])
+
+reporting_columns = [
+    "player_label",
+    "Practices",
+    "FT Attempted",
+    "FT Makes",
+    "FT %",
+    "2PT Attempts",
+    "2PT Makes",
+    "2PT %",
+    "3PT Attempts",
+    "3PT Makes",
+    "3PT %",
+    "FG Attempts",
+    "FG Makes",
+    "FG %",
+    "Turnovers",
+    "Forced TO",
+    "Blocks",
+]
 ```
 
-# Here is a header denoting the first area
+# Report Overview
 
-# Here is a second header
+```{python}
+# | echo: false
+
+overview = pd.DataFrame(
+    {
+        "Metric": [
+            "Practice files",
+            "Player-practice rows",
+            "Unique players",
+            "Total field goal attempts",
+            "Total field goals made",
+            "Overall field goal rate",
+        ],
+        "Value": [
+            practice_data["source_file"].nunique(),
+            len(practice_data),
+            player_summary["player_label"].nunique(),
+            practice_data["FG Attempts"].sum(),
+            practice_data["FG Makes"].sum(),
+            practice_data["FG Makes"].sum() / practice_data["FG Attempts"].sum(),
+        ],
+    }
+)
+
+overview["Value"] = overview.apply(
+    lambda row: format_overview_rate(row["Value"])
+    if row["Metric"] == "Overall field goal rate"
+    else format_overview_value(row["Value"]),
+    axis=1,
+)
+style_table(overview.style)
+```
+
+This workbook separates data cleanup from reporting. The pipeline trims player names, removes blank and note rows, coerces numeric fields, ignores spreadsheet artifacts like `#DIV/0!`, and recalculates shooting rates from makes and attempts.
+
+# Player Summary
+
+```{python}
+# | echo: false
+
+style_table(
+    player_summary.loc[:, reporting_columns]
+    .rename(columns={"player_label": "Name"})
+    .style.format(
+        {
+            "Practices": "{:.0f}",
+            "FT Attempted": "{:.0f}",
+            "FT Makes": "{:.0f}",
+            "FT %": "{:.1%}",
+            "2PT Attempts": "{:.0f}",
+            "2PT Makes": "{:.0f}",
+            "2PT %": "{:.1%}",
+            "3PT Attempts": "{:.0f}",
+            "3PT Makes": "{:.0f}",
+            "3PT %": "{:.1%}",
+            "FG Attempts": "{:.0f}",
+            "FG Makes": "{:.0f}",
+            "FG %": "{:.1%}",
+            "Turnovers": "{:.0f}",
+            "Forced TO": "{:.0f}",
+            "Blocks": "{:.0f}",
+        },
+        na_rep="—",
+    )
+)
+```
+
+## Most Efficient Shooters
+
+```{python}
+# | echo: false
+
+style_table(
+    qualified_shooters.loc[
+        :,
+        ["player_label", "FG Attempts", "FG Makes", "FG %", "2PT %", "3PT %", "FT %"],
+    ]
+    .sort_values(["FG %", "FG Attempts"], ascending=[False, False])
+    .head(10)
+    .rename(columns={"player_label": "Name"})
+    .style.format(
+        {
+            "FG Attempts": "{:.0f}",
+            "FG Makes": "{:.0f}",
+            "FG %": "{:.1%}",
+            "2PT %": "{:.1%}",
+            "3PT %": "{:.1%}",
+            "FT %": "{:.1%}",
+        },
+        na_rep="—",
+    )
+)
+```
+
+```{python}
+# | echo: false
+# | fig-cap: "Players ranked by total field-goal attempts."
+
+top_attempts = player_summary.head(10).copy()
+
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(
+    data=top_attempts,
+    y="player_label",
+    x="FG Attempts",
+    hue="player_label",
+    palette=[ARIZONA_BLUE, ARIZONA_RED] * 5,
+    dodge=False,
+    legend=False,
+    ax=ax,
+)
+ax.set_xlabel("Field Goal Attempts")
+ax.set_ylabel("")
+ax.set_title("Top Players by Shot Volume")
+ax.title.set_color(ARIZONA_BLUE)
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+# | echo: false
+# | fig-cap: "Shot volume versus field-goal efficiency for players with at least 25 attempts."
+
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.scatterplot(data=qualified_shooters, x="FG Attempts", y="FG %", s=120, color=ARIZONA_RED, ax=ax)
+
+for _, row in qualified_shooters.iterrows():
+    ax.text(row["FG Attempts"] + 2, row["FG %"], row["player_label"], fontsize=8, va="center")
+
+ax.set_xlabel("Field Goal Attempts")
+ax.set_ylabel("Field Goal Rate")
+ax.yaxis.set_major_formatter(PercentFormatter(1.0))
+ax.set_title("Volume vs. Efficiency")
+ax.title.set_color(ARIZONA_BLUE)
+plt.tight_layout()
+plt.show()
+```
+
+## Defensive Activity
+
+```{python}
+# | echo: false
+
+style_table(
+    ball_pressure.loc[:, ["player_label", "Forced TO", "Blocks", "Defensive Events"]]
+    .head(10)
+    .rename(columns={"player_label": "Name"})
+    .style.format(
+        {
+            "Forced TO": "{:.0f}",
+            "Blocks": "{:.0f}",
+            "Defensive Events": "{:.0f}",
+        }
+    )
+)
+```
+
+# Practice Trends
+
+```{python}
+# | echo: false
+
+style_table(
+    practice_summary.loc[
+        :, ["practice_label", "Player Entries", "FG Attempts", "FG Makes", "FG %", "Turnovers", "Forced TO", "Blocks"]
+    ]
+    .rename(columns={"practice_label": "Date"})
+    .style.format(
+        {
+            "Player Entries": "{:.0f}",
+            "FG Attempts": "{:.0f}",
+            "FG Makes": "{:.0f}",
+            "FG %": "{:.1%}",
+            "Turnovers": "{:.0f}",
+            "Forced TO": "{:.0f}",
+            "Blocks": "{:.0f}",
+        },
+        na_rep="—",
+    )
+)
+```
+
+```{python}
+# | echo: false
+# | fig-cap: "Overall field-goal percentage by practice date."
+
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.lineplot(
+    data=practice_summary,
+    x="practice_label",
+    y="FG %",
+    marker="o",
+    sort=False,
+    color=ARIZONA_BLUE,
+    ax=ax,
+)
+ax.set_xlabel("Practice")
+ax.set_ylabel("Field Goal %")
+ax.set_title("Team Shooting Trend by Practice")
+ax.yaxis.set_major_formatter(PercentFormatter(1.0))
+ax.tick_params(axis="x", rotation=45)
+ax.title.set_color(ARIZONA_BLUE)
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+# | echo: false
+# | fig-cap: "Field-goal makes and attempts by practice."
+
+practice_volume = practice_summary.melt(
+    id_vars="practice_label",
+    value_vars=["FG Attempts", "FG Makes"],
+    var_name="Metric",
+    value_name="Value",
+)
+
+fig, ax = plt.subplots(figsize=(11, 5))
+sns.barplot(
+    data=practice_volume,
+    x="practice_label",
+    y="Value",
+    hue="Metric",
+    palette={"FG Attempts": ARIZONA_BLUE, "FG Makes": ARIZONA_RED},
+    ax=ax,
+)
+ax.set_xlabel("Practice")
+ax.set_ylabel("Shots")
+ax.set_title("Practice Shot Volume")
+ax.tick_params(axis="x", rotation=45)
+ax.title.set_color(ARIZONA_BLUE)
+plt.tight_layout()
+plt.show()
+```
