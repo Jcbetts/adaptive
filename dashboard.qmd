@@ -426,8 +426,3 @@ plt.show()
 This view highlights who is taking the most shots overall. It is useful for understanding role, workload, and where efficiency gains would have the biggest team impact.
 
 :::
-
-
-```{python}
-pip freeze > requirements.txt
-```
