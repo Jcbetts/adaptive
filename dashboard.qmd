@@ -1,0 +1,428 @@
+---
+title: "Adaptive Athletics Dashboard"
+subtitle: "Accessible Practice Snapshot"
+author:
+  - name: Ryan Dennehy
+    affiliation:
+      - name: University of Arizona
+format:
+  html:
+    css: dashboard.css
+toc: false
+title-block-banner: true
+---
+
+```{python}
+# | label: libraries
+# | echo: false
+# | message: false
+
+from IPython.display import HTML, display
+import html
+import json
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from matplotlib.ticker import PercentFormatter
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path.cwd()))
+
+from adaptive_athletics.data_pipeline import (
+    build_player_summary,
+    build_practice_summary,
+    load_practice_data,
+)
+
+ARIZONA_RED = "#AB0520"
+ARIZONA_BLUE = "#0C234B"
+ARIZONA_SAND = "#F4EDE5"
+
+plt.style.use("seaborn-v0_8-whitegrid")
+sns.set_theme(style="whitegrid")
+
+
+def pct(value: float) -> str:
+    if pd.isna(value):
+        return "—"
+    return f"{value:.1%}"
+
+
+def whole(value: float) -> str:
+    if pd.isna(value):
+        return "—"
+    return f"{int(round(value)):,}"
+
+
+def render_cards(cards: list[dict[str, str]], card_class: str = "stat-card") -> None:
+    body = "".join(
+        f"""
+        <article class="{card_class}">
+          <p class="eyebrow">{html.escape(card['label'])}</p>
+          <p class="big-number">{html.escape(card['value'])}</p>
+          <p class="supporting-text">{html.escape(card['note'])}</p>
+        </article>
+        """
+        for card in cards
+    )
+    display(HTML(f'<section class="card-grid" aria-label="Dashboard highlights">{body}</section>'))
+
+
+def render_intro_panel(title: str, body: str) -> None:
+    display(
+        HTML(
+            f"""
+            <section class="intro-panel">
+              <p class="eyebrow">Dashboard Summary</p>
+              <h2 class="hero-title">{html.escape(title)}</h2>
+              <p class="hero-copy">{html.escape(body)}</p>
+            </section>
+            """
+        )
+    )
+
+
+def render_player_spotlight(players: list[dict[str, str]]) -> None:
+    options = "".join(
+        f'<option value="{html.escape(player["Name"])}">{html.escape(player["Name"])}</option>'
+        for player in players
+    )
+    payload = json.dumps(players).replace("</", "<\\/")
+    display(
+        HTML(
+            f"""
+            <section class="spotlight-shell" aria-labelledby="player-spotlight-heading">
+              <div class="spotlight-header">
+                <div>
+                  <p class="eyebrow">Interactive View</p>
+                  <h2 id="player-spotlight-heading">Player Spotlight</h2>
+                  <p class="hero-copy">Pick a player to see a simple performance snapshot without searching through every table.</p>
+                </div>
+                <div class="spotlight-control">
+                  <label class="spotlight-label" for="player-spotlight-select">Select player</label>
+                  <select id="player-spotlight-select" class="spotlight-select">{options}</select>
+                </div>
+              </div>
+              <div id="player-spotlight-cards" class="card-grid" aria-live="polite"></div>
+            </section>
+            <script>
+            (() => {{
+              const players = {payload};
+              const select = document.getElementById("player-spotlight-select");
+              const cards = document.getElementById("player-spotlight-cards");
+              if (!select || !cards || !players.length) return;
+              const render = (name) => {{
+                const player = players.find((item) => item.Name === name) || players[0];
+                cards.innerHTML = `
+                  <article class="stat-card">
+                    <p class="eyebrow">Name</p>
+                    <p class="big-number">${{player.Name}}</p>
+                    <p class="supporting-text">${{player.Practices}} practices tracked</p>
+                  </article>
+                  <article class="stat-card">
+                    <p class="eyebrow">Field Goal Rate</p>
+                    <p class="big-number">${{player["FG %"]}}</p>
+                    <p class="supporting-text">${{player["FG Makes"]}} makes on ${{player["FG Attempts"]}} attempts</p>
+                  </article>
+                  <article class="stat-card">
+                    <p class="eyebrow">Free Throw Rate</p>
+                    <p class="big-number">${{player["FT %"]}}</p>
+                    <p class="supporting-text">${{player["FT Makes"]}} makes on ${{player["FT Attempted"]}} attempts</p>
+                  </article>
+                  <article class="insight-card">
+                    <p class="eyebrow">Defensive Activity</p>
+                    <p class="big-number">${{player["Defensive Events"]}}</p>
+                    <p class="supporting-text">${{player["Forced TO"]}} forced turnovers and ${{player["Blocks"]}} blocks</p>
+                  </article>
+                `;
+              }};
+              select.addEventListener("change", (event) => render(event.target.value));
+              render(select.value);
+            }})();
+            </script>
+            """
+        )
+    )
+
+
+def style_table(styler: pd.io.formats.style.Styler) -> pd.io.formats.style.Styler:
+    return styler.set_table_styles(
+        [
+            {"selector": "th", "props": [("padding", "0.75rem 1rem")]},
+            {"selector": "td", "props": [("padding", "0.75rem 1rem")]},
+            {
+                "selector": "thead th",
+                "props": [
+                    ("background-color", ARIZONA_BLUE),
+                    ("color", "white"),
+                    ("font-weight", "700"),
+                ],
+            },
+        ],
+        overwrite=False,
+    )
+
+
+def display_name(first_name: str, last_name: str, fallback: str) -> str:
+    first = (first_name or "").strip()
+    last = (last_name or "").strip()
+    if first == "Abby" and last:
+        return last
+    if first:
+        return first
+    return fallback
+```
+
+```{python}
+# | label: data
+# | echo: false
+
+practice_data = load_practice_data("Data")
+player_summary = build_player_summary(practice_data)
+practice_summary = build_practice_summary(practice_data)
+
+player_summary["Name"] = player_summary.apply(
+    lambda row: display_name(row["First Name"], row["Last Name"], row["player_name"]),
+    axis=1,
+)
+player_summary["Defensive Events"] = player_summary["Forced TO"] + player_summary["Blocks"]
+player_summary["Attempts per Practice"] = player_summary["FG Attempts"] / player_summary["Practices"]
+
+practice_summary["Date"] = practice_summary["practice_label"]
+
+qualified_shooters = player_summary.loc[player_summary["FG Attempts"] >= 25].copy()
+top_volume = player_summary.iloc[0]
+top_efficiency = qualified_shooters.sort_values(["FG %", "FG Attempts"], ascending=[False, False]).iloc[0]
+top_defense = player_summary.sort_values(
+    ["Defensive Events", "Forced TO", "Blocks"],
+    ascending=[False, False, False],
+).iloc[0]
+latest_practice = practice_summary.iloc[-1]
+best_practice = practice_summary.sort_values(["FG %", "FG Attempts"], ascending=[False, False]).iloc[0]
+
+player_spotlight = (
+    player_summary.loc[
+        :,
+        [
+            "Name",
+            "Practices",
+            "FG Attempts",
+            "FG Makes",
+            "FG %",
+            "FT Attempted",
+            "FT Makes",
+            "FT %",
+            "Forced TO",
+            "Blocks",
+            "Defensive Events",
+        ],
+    ]
+    .sort_values("Name")
+    .assign(
+        **{
+            "Practices": lambda df: df["Practices"].map(whole),
+            "FG Attempts": lambda df: df["FG Attempts"].map(whole),
+            "FG Makes": lambda df: df["FG Makes"].map(whole),
+            "FG %": lambda df: df["FG %"].map(pct),
+            "FT Attempted": lambda df: df["FT Attempted"].map(whole),
+            "FT Makes": lambda df: df["FT Makes"].map(whole),
+            "FT %": lambda df: df["FT %"].map(pct),
+            "Forced TO": lambda df: df["Forced TO"].map(whole),
+            "Blocks": lambda df: df["Blocks"].map(whole),
+            "Defensive Events": lambda df: df["Defensive Events"].map(whole),
+        }
+    )
+    .to_dict(orient="records")
+)
+```
+
+## Quick View
+
+```{python}
+# | echo: false
+
+render_intro_panel(
+    "Fast, readable practice reporting",
+    "This dashboard pulls the most important team and player trends into one place with high-contrast cards, simplified labels, and a lighter layout than the full workbook.",
+)
+
+render_cards(
+    [
+        {
+            "label": "Overall field goal rate",
+            "value": pct(practice_data["FG Makes"].sum() / practice_data["FG Attempts"].sum()),
+            "note": f"{whole(practice_data['FG Makes'].sum())} makes on {whole(practice_data['FG Attempts'].sum())} attempts",
+        },
+        {
+            "label": "Tracked practices",
+            "value": whole(practice_summary["Date"].nunique()),
+            "note": f"{whole(len(practice_data))} player-practice rows cleaned and included",
+        },
+        {
+            "label": "Top volume shooter",
+            "value": top_volume["Name"],
+            "note": f"{whole(top_volume['FG Attempts'])} attempts across {whole(top_volume['Practices'])} practices",
+        },
+        {
+            "label": "Most efficient shooter",
+            "value": top_efficiency["Name"],
+            "note": f"{pct(top_efficiency['FG %'])} on at least 25 field goal attempts",
+        },
+    ]
+)
+```
+
+```{python}
+# | echo: false
+
+render_player_spotlight(player_spotlight)
+```
+
+## What Stands Out
+
+```{python}
+# | echo: false
+
+render_cards(
+    [
+        {
+            "label": "Best practice shooting day",
+            "value": best_practice["Date"],
+            "note": f"{pct(best_practice['FG %'])} field goal rate",
+        },
+        {
+            "label": "Latest practice in the data",
+            "value": latest_practice["Date"],
+            "note": f"{pct(latest_practice['FG %'])} field goal rate with {whole(latest_practice['FG Attempts'])} attempts",
+        },
+        {
+            "label": "Defensive activity leader",
+            "value": top_defense["Name"],
+            "note": f"{whole(top_defense['Defensive Events'])} combined forced turnovers and blocks",
+        },
+    ],
+    card_class="insight-card",
+)
+```
+
+The dashboard is designed to be readable at a glance. High-contrast colors, large numbers, plain-language labels, and short summary notes make it easier to understand the team's performance quickly.
+
+## Team Details
+
+::: {.panel-tabset}
+
+### Player Leaders
+
+```{python}
+# | echo: false
+
+leaders = (
+    player_summary.loc[:, ["Name", "Practices", "FG Attempts", "FG Makes", "FG %", "Attempts per Practice", "Defensive Events"]]
+    .sort_values(["FG Attempts", "FG %"], ascending=[False, False])
+    .head(10)
+)
+
+style_table(
+    leaders.style.format(
+        {
+            "Practices": "{:.0f}",
+            "FG Attempts": "{:.0f}",
+            "FG Makes": "{:.0f}",
+            "FG %": "{:.1%}",
+            "Attempts per Practice": "{:.1f}",
+            "Defensive Events": "{:.0f}",
+        },
+        na_rep="—",
+    )
+)
+```
+
+### Practice Snapshot
+
+```{python}
+# | echo: false
+
+snapshot = practice_summary.loc[
+    :,
+    ["Date", "Player Entries", "FG Attempts", "FG Makes", "FG %", "Turnovers", "Forced TO", "Blocks"],
+].copy()
+
+style_table(
+    snapshot.style.format(
+        {
+            "Player Entries": "{:.0f}",
+            "FG Attempts": "{:.0f}",
+            "FG Makes": "{:.0f}",
+            "FG %": "{:.1%}",
+            "Turnovers": "{:.0f}",
+            "Forced TO": "{:.0f}",
+            "Blocks": "{:.0f}",
+        },
+        na_rep="—",
+    )
+)
+```
+
+:::
+
+## Visual Trends
+
+::: {.panel-tabset}
+
+### Shooting Trend
+
+```{python}
+# | echo: false
+# | fig-cap: "Field goal percentage by practice date."
+
+fig, ax = plt.subplots(figsize=(11, 5.5))
+sns.lineplot(
+    data=practice_summary,
+    x="Date",
+    y="FG %",
+    marker="o",
+    linewidth=2.5,
+    color=ARIZONA_BLUE,
+    ax=ax,
+)
+ax.axhline(practice_summary["FG %"].mean(), linestyle="--", linewidth=1.5, color=ARIZONA_RED)
+ax.set_xlabel("Practice date")
+ax.set_ylabel("Field goal rate")
+ax.set_title("Team Shooting Trend")
+ax.yaxis.set_major_formatter(PercentFormatter(1.0))
+ax.tick_params(axis="x", rotation=45)
+ax.title.set_color(ARIZONA_BLUE)
+plt.tight_layout()
+plt.show()
+```
+
+The dashed red line marks the team average. Points above that line were stronger shooting practices than the overall average.
+
+### Top Scorers By Attempts
+
+```{python}
+# | echo: false
+# | fig-cap: "Top 8 players ranked by field goal attempts."
+
+top_attempts = player_summary.sort_values(["FG Attempts", "FG %"], ascending=[False, False]).head(8)
+
+fig, ax = plt.subplots(figsize=(10.5, 6))
+sns.barplot(
+    data=top_attempts,
+    x="FG Attempts",
+    y="Name",
+    color=ARIZONA_RED,
+    ax=ax,
+)
+ax.set_xlabel("Field goal attempts")
+ax.set_ylabel("")
+ax.set_title("Most Active Shooters")
+ax.title.set_color(ARIZONA_BLUE)
+plt.tight_layout()
+plt.show()
+```
+
+This view highlights who is taking the most shots overall. It is useful for understanding role, workload, and where efficiency gains would have the biggest team impact.
+
+:::
