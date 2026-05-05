@@ -35,6 +35,8 @@ from adaptive_athletics.data_pipeline import (
     load_practice_data,
 )
 
+from pandas.io.formats.style import Styler
+
 ARIZONA_RED = "#AB0520"
 ARIZONA_BLUE = "#0C234B"
 ARIZONA_SAND = "#F4EDE5"
@@ -146,7 +148,7 @@ def render_player_spotlight(players: list[dict[str, str]]) -> None:
     )
 
 
-def style_table(styler: pd.io.formats.style.Styler) -> pd.io.formats.style.Styler:
+def style_table(styler: Styler) -> Styler:
     return styler.set_table_styles(
         [
             {"selector": "th", "props": [("padding", "0.75rem 1rem")]},
