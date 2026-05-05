@@ -1,4 +1,4 @@
--e git+https://github.com/Jcbetts/adaptive.git@ded127c70910e62144f95a7ab779ebff7dd9d7db#egg=adaptive_athletics
+git+https://github.com/Jcbetts/adaptive.git@ded127c70910e62144f95a7ab779ebff7dd9d7db#egg=adaptive_athletics
 anyio==4.12.1
 appnope==0.1.4
 argon2-cffi==25.1.0
